@@ -1,0 +1,83 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2012                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes // Guide
+{
+    Most Stable:        Euler;
+                        CrankNicolson 0.9; // 0 = Euler, 1 = Pure CrankNicolson
+    Most Accurate:      backward;
+
+
+    Only steady-state:  steadyState;
+}
+
+gradSchemes // Guide
+{
+    Most Stable:        Gauss linear;
+    Most Accurate:      leastSquares;
+    
+    // Add limiter for stability
+    default             cellMDLimited Gauss linear 1.0;
+}
+
+divSchemes // Guide
+{
+    default         none; // Best practice
+
+    Most Stable:    Gauss upwind;
+    
+    Average:    |   Gauss limitedLinear 1.0;
+    Note, the   |   Gauss linearUpwind <gradScheme>; // Must specify gradScheme
+    order isn't |   Gauss vanLeer;
+    exact here  |   Gauss QUICK;
+
+    Most Accurate:  Gauss linear
+    
+    Steady state:   bounded Gauss limitedLinear 1.0;
+
+
+    // Rule of thumb
+
+    default         none;
+    div(phi,U)      Gauss limitedLinearV 1.0;
+    div(phi,k)      Gauss limitedLinear 1.0;
+    div(phi,epsilon)                Gauss limitedLinear 1.0;
+    div((nuEff*dev2(T(grad(U)))))   Gauss linear; // Viscosity term
+}
+
+laplacianSchemes // Guide
+{
+    Pattern:        Gauss <interoplation> <snGrad>;
+
+    default         Gauss linear <same as snGradSchemes>;
+}
+
+interpolationSchemes // Guide
+{
+    default         linear;
+}
+
+snGradSchemes // Guide
+{
+    Max non-ortho < 0.5 deg:    orthogonal;
+    Max non-ortho < 5   deg:    uncorrected;
+    Max non-ortho < 70  deg:    corrected;
+    Max non-ortho < 80  deg:    limited corrected 0.5;
+    Max non-ortho > 80  deg:    // Make a better mesh.
+}
+
+// ************************************************************************* //
