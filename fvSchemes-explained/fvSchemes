@@ -40,10 +40,11 @@ divSchemes // Guide
 
     Most Stable:    Gauss upwind;
     
-    Average:    |   Gauss limitedLinear 1.0;
-    Note, the   |   Gauss linearUpwind <gradScheme>; // Must specify gradScheme
-    order isn't |   Gauss vanLeer;
-    exact here  |   Gauss QUICK;
+    // Note, the order isn't exact here
+    Average:        Gauss limitedLinear 1.0;
+                    Gauss linearUpwind <gradScheme>; // Must specify gradScheme
+                    Gauss vanLeer;
+                    Gauss QUICK;
 
     Most Accurate:  Gauss linear
     
